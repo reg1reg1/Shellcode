@@ -5,6 +5,14 @@ global _start
 section .text
 _start:
 	
+	;Resetting the register
+	xor rax,rax
+	mov rsi,rax
+	mov rdi,rsi
+	mov rdx,rdi
+	mov r8,rdx
+	mov rcx,r8
+	mov rbx,rcx
 	;Step1: Create a socket using the socket syscall
 	;format of the socket call as displayed by man socket
 	; int socket(int domain, int type, int protocol)
@@ -119,8 +127,9 @@ _start:
 
 	xor rax,rax
 	jmp next
-	inp resb 64
-	pass db "x1337"
+	
+	inp: resb 64
+	pass: db "x1337"
 next:
 	;Reading Input
 	mov dil,al
@@ -140,12 +149,9 @@ next:
 	jz ExecCall
 	
 	;Exiting
+
 exiting:
-	jmp printMessage
-	msg: db "Incorrect Message",0xa
-	
-printMessage:
-	
+	;ExitSyscall	
 	xor rax,rax
 	mov al,60
 	mov dil,0
