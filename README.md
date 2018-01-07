@@ -14,7 +14,9 @@ Adding long descriptive comments in code to help people understand code easily, 
 
 <b><link of upcoming blog></b>
 </p>
-<h3><b>execBin.asm</b></h3>
+<h3>Linux </h3>
+The assembly code has been written for x86-64 architecture Intel, and are shellsafe, i.e do not contain a null or 0x00.
+1)execBin.asm
 
 File code written to spawn a shell('/bin/sh'), designed to run in the Linux x64 running on Intel
 
