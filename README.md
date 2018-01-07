@@ -18,10 +18,10 @@ Adding long descriptive comments in code to help people understand code easily, 
 <p>The assembly code has been written for x86-64 architecture Intel, and are shellsafe, i.e do not contain a null or 0x00.
 </p>
 <h4>1)execBin.asm</h4>
-
+<p>
 File code written to spawn a shell('/bin/sh'), designed to run in the Linux x64 running on Intel
-
+</p>
 <h4>2)tcpBindShell.asm</h4>
-
+<p>
 Spawns a <b>Tcp shell</b>, when a client connects over TCP. 
-
+</p>
