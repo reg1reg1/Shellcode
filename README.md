@@ -10,7 +10,7 @@ Shellcode in layman terms is any injected code that can be used to spawn a comma
 What if the execute instruction (.text section) of such an executable is formatted say, as a string and then cast as a function pointer in some high level language such as C. What happens when the function gets called? If this function is then called it executes the string (machine code). What if a simple hello world prog in C contains the formatted execuatble disguised as a string, and spawns a TCP shell listening on a port enabling a backdoor to an attacker? The possibilities are endless, and shellcode exploits are still common and widely used against vulnerable systems.
 
 Adding long descriptive comments in code to help people understand code easily, and also me in case I forget useful stuff.
-<b> <a href="http://shell-storm.org/shellcode/">shell-storm</a>
+<b> <a href="http://shell-storm.org/shellcode/">shell-storm</a></b>
 
 <b><link of upcoming blog></b>
 </p>
