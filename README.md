@@ -59,7 +59,7 @@ Since the shellcode is often delivered as a part of a payload, it has to be opti
 </p>
 </ul>
 </p>
-<h2>Linux </h3></p>
+<h2>Linux </h2></p>
 <p>The assembly code has been written for x86-64 architecture Intel, and are shellsafe, i.e do not contain a null or 0x00. In Linux , IA-32 and x86-64 we gdb (GNU debugger) is a great way to debug assembly code, and it certainly helps me a lot to use the text interface of the gnu (<i>gnu -q exec.s -tui</i>). For editing assembly code, it helps to use vim which is very powerful. 
 </p>
 <ol>
@@ -91,7 +91,68 @@ We are interested in the syscall number no 0x59. The procedure for calling a sys
 	<p>
 		A tcp bind shell is inheritently which spawns an execshell and binds it to a TCP socket.
 		Now what does bind mean? It means that the input/output of the spawned shell are replaced by the 
-		input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell.
+		input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell. The victim (the server here)  executes the shellcode, and inadvertently spawns a TCP shell on listening on the port 4444 (<i>this port has a history</i>) which could be in practicality any open port. The attacker then connects to the port over the network and then gains access to the shell. The stack  technique has been used to make this code shellsafe.
+	</p>
+</li>
+<li>
+	<b>
+		tcpReverseShell.asm
+	</b>
+	<p>
+		A reverse shell spawns a shell over TCP but instead of the victim listening, the victim connects to a listening service and spawns a shell and replaces whatever it receives from the server onto the shell.
 	</p>
 </li>
 </ol>
+<h3>Executing the shellcode</h3>
+<p>
+	Shellcode can be generated as follows.
+	Since the assembly is written for Linux x86-64 arch, we will use the NASM assembler
+	<h4>Assembling</h4>
+	<pre>
+	nasm -felf64 -o myFile.o myFile.asm	
+	</pre>
+	We add -N to be able to rewrite the stack
+	<h4>Linking</h4>
+	<pre>
+		ld -o myFile.o  myFile.s -N
+	</pre>
+	<br>
+	Now we need to generate the hex machine code that can be placed inside a Cfile.
+	To do this we will use a linux utility called <i>objCopy</i>.
+	<pre>
+		objcopy -j.text -O binary execShell execShell.bin
+		hexdump -v -e '"\\""x" 1/1 "%02x" ""' execShell.bin	
+	</pre>
+	Once this shell is copied we can inject it to the buffer to be used by the C code  for injection as under. The C file for using the assembly as shell is as below.
+	<pre>
+#include&ltstdio.h&gt
+#include&ltstring.h&gt
+/*
+Machine code to be injected for the exploit 
+This will be executed and we will see how
+*/
+unsigned char code[] = "&lt shellcode String &gt";
+
+
+main()
+{
+
+        printf("Shellcode Length:  %d\n", (int)strlen(code));
+        /*
+          Method of shellcode execution (Execv)
+          Shellcode will be injected into the code as a function
+        */
+        //&lt--1---&gt    &lt----2-------->&gt
+        int (*ret)() = (int(*)())code;
+        //&lt----------3--------------&gt
+        /*
+        1.Pointer to a function with no parameter(indicated by '()') that retuns int
+        2.Casts the above unsigned character array as a pointer to a function
+        3. ret() is then called from inside main.
+        -> gcc with -fno-stack-protect -z execstack -o <filename>.o <filename>.c
+        */
+        ret();
+
+}
+	</pre>
+</p>
