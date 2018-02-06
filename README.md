@@ -91,7 +91,10 @@ We are interested in the syscall number no 0x59. The procedure for calling a sys
 	<p>
 		A tcp bind shell is inheritently which spawns an execshell and binds it to a TCP socket.
 		Now what does bind mean? It means that the input/output of the spawned shell are replaced by the 
-		input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell. The victim (the server here)  executes the shellcode, and inadvertently spawns a TCP shell on listening on the port 4444 (<i>this port has a history</i>) which could be in practicality any open port. The attacker then connects to the port over the network and then gains access to the shell. The stack  technique has been used to make this code shellsafe.
+		input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell. The victim (the server here)  executes the shellcode, and inadvertently spawns a TCP shell on listening on the port 4444 (<i>this port has a history</i>) which could be in practicality any open port. The attacker then connects to the port over the network and then gains access to the shell. The stack  technique has been used to make this code shellsafe. 
+		<p>There is one additional feature that has been implemented as part of the code is a passcode
+			that will be passed and verified before the access to the shell is given. In practice this has just the utility of demonstrating that additional operations may be performed before spawning the shell. Also, it provides a basic security feature. 
+		</p>
 	</p>
 </li>
 <li>
@@ -99,7 +102,7 @@ We are interested in the syscall number no 0x59. The procedure for calling a sys
 		tcpReverseShell.asm
 	</b>
 	<p>
-		A reverse shell spawns a shell over TCP but instead of the victim listening, the victim connects to a listening service and spawns a shell and replaces whatever it receives from the server onto the shell.
+		A reverse shell spawns a shell over TCP but instead of the victim listening, the victim connects to a listening service and spawns a shell and replaces whatever it receives from the server onto the shell.This too has a password protected reverse shell. Inherently a reverse shell are harder to monitor as they may be spawned from any port and difficult to block and avoid. Also reverse shells are not services that must be continuously running to support this attack.
 	</p>
 </li>
 </ol>
