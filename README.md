@@ -149,7 +149,7 @@ main()
         int (*ret)() = (int(*)())code;
         //&lt----------3--------------&gt
         /*
-        1.Pointer to a function with no parameter(indicated by '()') that retuns int
+        1.Pointer to a function with no parameter(indicated by '()') that returns int
         2.Casts the above unsigned character array as a pointer to a function
         3. ret() is then called from inside main.
         -> gcc with -fno-stack-protect -z execstack -o <filename>.o <filename>.c
