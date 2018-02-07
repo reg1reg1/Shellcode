@@ -19,34 +19,34 @@ Adding long descriptive comments in code to help people understand code easily, 
 <p>
 There are certain key differences between Shellcode and StandAlone assembly programs. Due to these, the assembly program that performs perfectly well when assembled and run as an executable, fails when converted as a shellcode. Shellcode has to adhere to the following constraints.
 <ul>
-	<li><b>Position independent code</b>
-	<p>
-	The most crucial feature to understand that your code must be position independent. In layman terms, what this means is you cannot have any hardcoded address values in your assembly code.
-	Only <i>.text</i> section of your assembly code is valid, so the variables in data section will not be considered in the shellcode. Hence any strings or hardcoded variables have to be placed on the stack.
-	There are two techniques, primarily to achieve this.
-	<ul>
-		  <li>
-		  JMP-CALL-POP
-		  </br>
-		  <p>
-		  This technique primarily involves placing the address of the string/variable in 
-		  just after a call instruction. When CALL is executed , as we know it places the next instruction onto the stack( <i>When RET is called this is set to EIP </i>)
-		  After the address of the string is pushed , it could then be used to refer to the string variable
-		  </p>
-		  </li>
-		  <li>STACK-TECHNIQUE
-		  <p>
-		 	We can also push the variable/string onto the stack (in reverse ), and then use the string directly from the stack.
-		  </p></li>
-	</ul>
-	There is one more way to accomplish this in x86-64, but that is not supported in IA-32 architectures,
-	which is relative addressing mode. Using this, the variables could be loaded located by the assembler relative 
+  <li><b>Position independent code</b>
+  <p>
+  The most crucial feature to understand that your code must be position independent. In layman terms, what this means is you cannot have any hardcoded address values in your assembly code.
+  Only <i>.text</i> section of your assembly code is valid, so the variables in data section will not be considered in the shellcode. Hence any strings or hardcoded variables have to be placed on the stack.
+  There are two techniques, primarily to achieve this.
+  <ul>
+      <li>
+      JMP-CALL-POP
+      </br>
+      <p>
+      This technique primarily involves placing the address of the string/variable in 
+      just after a call instruction. When CALL is executed , as we know it places the next instruction onto the stack( <i>When RET is called this is set to EIP </i>)
+      After the address of the string is pushed , it could then be used to refer to the string variable
+      </p>
+      </li>
+      <li>STACK-TECHNIQUE
+      <p>
+      We can also push the variable/string onto the stack (in reverse ), and then use the string directly from the stack.
+      </p></li>
+  </ul>
+  There is one more way to accomplish this in x86-64, but that is not supported in IA-32 architectures,
+  which is relative addressing mode. Using this, the variables could be loaded located by the assembler relative 
 
 </p>
 </li>
 <li><b>Global entry point not defined</b>
  <p>
-The program starts top down, and <i>_start</i> ceases to hold meaning. The program starts from the first instruction in the text section	
+The program starts top down, and <i>_start</i> ceases to hold meaning. The program starts from the first instruction in the text section  
 </p>
 </li>
 <li><b>Cannot have NULL and certain bad characters</b>
@@ -73,61 +73,68 @@ We are interested in the syscall number no 0x59. The procedure for calling a sys
 </p>
 </li>
 <li>
-	<b>jcpexecShell.asm</b>
+  <b>jcpexecShell.asm</b>
 <p> 
-	This shellcode follows the <i>JMP-CALL-POP</i> technique discussed above. The code contains hints for each place. We must place them in the said order and I already asked this question in stackoverflow, you can find it here. <a href="https://stackoverflow.com/questions/47761584/avoiding-the-jmp-in-the-jmp-call-pop-technique-for-shellcode-nasm">JMP-CALL-POP order</a>
+  This shellcode follows the <i>JMP-CALL-POP</i> technique discussed above. The code contains hints for each place. We must place them in the said order and I already asked this question in stackoverflow, you can find it here. <a href="https://stackoverflow.com/questions/47761584/avoiding-the-jmp-in-the-jmp-call-pop-technique-for-shellcode-nasm">JMP-CALL-POP order</a>
 </p>
 </li>
 <li>
-	<b>stackexecShell.asm</b>
-	<p>
-		This shellcode follows the stack technique, and pushes the shell string onto the stack and accessing it from there. It is easier to handle longer strings with JMP-CALL-POP technique howevever.
-	</p>
+  <b>stackexecShell.asm</b>
+  <p>
+    This shellcode follows the stack technique, and pushes the shell string onto the stack and accessing it from there. It is easier to handle longer strings with JMP-CALL-POP technique howevever.
+  </p>
 </li>
 <li>
-	<b>
-		tcpBindShell.asm
-	</b>
-	<p>
-		A tcp bind shell is inheritently which spawns an execshell and binds it to a TCP socket.
-		Now what does bind mean? It means that the input/output of the spawned shell are replaced by the 
-		input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell. The victim (the server here)  executes the shellcode, and inadvertently spawns a TCP shell on listening on the port 4444 (<i>this port has a history</i>) which could be in practicality any open port. The attacker then connects to the port over the network and then gains access to the shell. The stack  technique has been used to make this code shellsafe. 
-		<p>There is one additional feature that has been implemented as part of the code is a passcode
-			that will be passed and verified before the access to the shell is given. In practice this has just the utility of demonstrating that additional operations may be performed before spawning the shell. Also, it provides a basic security feature. 
-		</p>
-	</p>
+  <b>
+    tcpBindShell.asm
+  </b>
+  <p>
+    A tcp bind shell is inheritently which spawns an execshell and binds it to a TCP socket.
+    Now what does bind mean? It means that the input/output of the spawned shell are replaced by the 
+    input output stream of the TCP socket. Envision a simple TCP chat server, however the client sends chat messages to the server's side spawned shell. The client will have the same user level access on the shell as the user spawning the shell. The victim (the server here)  executes the shellcode, and inadvertently spawns a TCP shell on listening on the port 4444 (<i>this port has a history</i>) which could be in practicality any open port. The attacker then connects to the port over the network and then gains access to the shell. The stack  technique has been used to make this code shellsafe. 
+    <p>There is one additional feature that has been implemented as part of the code is a passcode
+      that will be passed and verified before the access to the shell is given. In practice this has just the utility of demonstrating that additional operations may be performed before spawning the shell. Also, it provides a basic security feature. 
+    </p>
+  </p>
 </li>
 <li>
-	<b>
-		tcpReverseShell.asm
-	</b>
-	<p>
-		A reverse shell spawns a shell over TCP but instead of the victim listening, the victim connects to a listening service and spawns a shell and replaces whatever it receives from the server onto the shell.This too has a password protected reverse shell. Inherently a reverse shell are harder to monitor as they may be spawned from any port and difficult to block and avoid. Also reverse shells are not services that must be continuously running to support this attack.
-	</p>
+  <b>
+    tcpReverseShell.asm
+  </b>
+  <p>
+    A reverse shell spawns a shell over TCP but instead of the victim listening, the victim connects to a listening service and spawns a shell and replaces whatever it receives from the server onto the shell.This too has a password protected reverse shell. Inherently a reverse shell are harder to monitor as they may be spawned from any port and difficult to block and avoid. Also reverse shells are not services that must be continuously running to support this attack.
+  </p>
 </li>
 </ol>
 <h3>Executing the shellcode</h3>
 <p>
-	Shellcode can be generated as follows.
-	Since the assembly is written for Linux x86-64 arch, we will use the NASM assembler
-	<h4>Assembling</h4>
-	<pre>
-	nasm -felf64 -o myFile.o myFile.asm	
-	</pre>
-	We add -N to be able to rewrite the stack
-	<h4>Linking</h4>
-	<pre>
-		ld -o myFile.o  myFile.s -N
-	</pre>
-	<br>
-	Now we need to generate the hex machine code that can be placed inside a Cfile.
-	To do this we will use a linux utility called <i>objCopy</i>.
-	<pre>
-		objcopy -j.text -O binary execShell execShell.bin
-		hexdump -v -e '"\\""x" 1/1 "%02x" ""' execShell.bin	
-	</pre>
-	Once this shell is copied we can inject it to the buffer to be used by the C code  for injection as under. The C file for using the assembly as shell is as below.
-	<pre>
+  Shellcode can be generated as follows.
+  Since the assembly is written for Linux x86-64 arch, we will use the NASM assembler.
+  If nasm is not installed on the system, install it from from the respective Linux repo.
+  <h4>Assembling</h4>
+  <pre>
+  nasm -felf64 -o myFile.o myFile.asm 
+  </pre>
+  We add -N to be able to rewrite the stack. This operation is useful where we are writing on to the
+  stack memory. Examples are operations such as below. We are moving a value stored in eax to the address value represented by rsp incremented by 1. 
+ <pre>
+    mov dword [rsp+1], eax
+  </pre>
+
+  <h4>Linking</h4>
+  <pre>
+    ld -o myFile.o  myFile.s -N
+  </pre>
+  <br>
+  Now we need to generate the hex machine code that can be placed inside a Cfile.
+  To do this we will use a linux utility called <i>objCopy</i>.
+  There are some buggy converters on shellstorm, so make it a habit to do the below for getting the shellcode.
+  <pre>
+    objcopy -j.text -O binary execShell execShell.bin
+    hexdump -v -e '"\\""x" 1/1 "%02x" ""' execShell.bin 
+  </pre>
+  Once this shell is copied we can inject it to the buffer to be used by the C code  for injection as under. The C file for using the assembly as shell is as below.
+  <pre>
 #include&ltstdio.h&gt
 #include&ltstring.h&gt
 /*
@@ -157,5 +164,13 @@ main()
         ret();
 
 }
-	</pre>
+  </pre>
+</p>
+<h2>Windows</h2>
+<p>
+  In Windows, the chosen machine is IA-32 and with ASLR disabled. The primary motive of the excercise to learn windows shellcode was to demonstrate buffer overflow attacks. For this reason, the machine they have been tested out on is a Win XP, 32-bit SP3. Buffer overflow attacks demonstrated are basic, and in present day scenario impractical on 64-bit machines.(64-bit address space is too large for bruteforcing to work with ASLR). WinXp SP3, with ASLR disabled is easy ot target with applications that do not guard against buffer overflow. Most of the payload generation has been done on metasploit and then injected into the application directly.
+</p>
+<p>
+  For windows the assembler being used is <b>MASM32</b>. It can be downloaded from <a href="http://www.masm32.com/download.htm">here</a>.
+
 </p>
