@@ -1,0 +1,68 @@
+
+#This file contains the common commands and flags to create the assemblies and eexecutables
+#It also contains some common pitfalls to avoid
+#Always make sure this is turned off, for initial exploits or you will be in a world of pain. 0 is for turning off randomization, 1 is limited, 2 is full.
+
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+
+
+# Assembling and creating a 32-bit executable on a 64-bit system
+# The -g flag not being present leads to crashing of the program or address not being found which happened with "execAnatomy.asm". The shellcode repeatedly fails when -g flag of the assembler is not present.
+
+as foo.S -o foo.o -g --32
+ld -o foo foo.o  -m elf_i386
+
+
+# Compiling and preserving symbols with gcc use -gstabs
+gcc -o output.o prog.c -gstabs
+
+
+#Usual compile flags for creating shellcode supported binary
+gcc -ggdb -fno-stack-protector -mpreferred-stack-boundary=2 -z execstack -o exitShellcode.o exitShellcode.c
+
+
+#objdump to see the binary disassembly
+objdump -d binary -M (intel/att)
+
+
+#x86 systems during writing a shellcode, always use the -N directive
+x86 system will treat the .text section as write protected which could cause problems. The assembly directives need to be added separately
+to the code or the linking step "ld" must have -N present, or the shellcode would simply fail.
+
+Another important point to remember is that the stack by default is not executable, so always mention the -z execstack during gcc compilation.
+
+The shellstorm conversion to shellcode might be buggy use the following commnads for converting your assembly to shellcode
+
+1. Step1: objcopy -j.text -O binary shellFormat shellFormat.bin (replace shellformat with you binaryname and nothing else needs changing) 
+2. Step2: hexdump -v -e '"\\""x" 1/1 "%02x" ""' shellFormat.bin (Copy the output from this command , this is your shellcode)
+
+
+
+
+# Handy information to supply exploit to the program. If you want to do it from within GDB and your input contains hex chars you can do this
+run < <(python -c 'print("abcdefghijklmnopqrst\x34\x84\x04\x08")')
+ The above runs within gdb and passes arguments to inputs from STDIN
+
+If you want to pass arguments as sysarg i.e to argv , you can do
+run $(python -c 'print("\xef\xbe\xad\xde")')
+
+Useful information at this stack overflow answer: https://reverseengineering.stackexchange.com/questions/13928/managing-inputs-for-payload-injection
+
+#When you want to do it from bash context you can do the above two things respectively as follows.
+./myProgram $(python -c "print '\xef\xbe\ad\de'") #this one is for system arguments
+printf "\xef\be\ad\de" | ./myProgram #This one is for STDIN
+
+
+
+
+
+# buffer exploit
+Handy website to generate pattern and find out offset: https://wiremask.eu/tools/buffer-overflow-pattern-generator/
+Buffer size , guess it in case you don't have source code. You can always analyze assembly and find out the buffer size.
+We choose 200, (exploit requirement say is 80). It will generate a string. You will get error message, cannot read address xxxxxxxxx , this is the overrwritten RIP/EIP register.
+Supply this register value and the site will tell you offset. There add the nop sled, followed by the shellcode.
+
+input string: Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2Ad3Ad4Ad5Ad6Ad7Ad8Ad9Ae0Ae1Ae2Ae3Ae4Ae5Ae6Ae7Ae8Ae9Af0Af1Af2Af3Af4Af5Af6Af7Af8Af9Ag0Ag1Ag2Ag3Ag4Ag5Ag
+
+
+
