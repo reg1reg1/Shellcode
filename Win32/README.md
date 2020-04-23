@@ -2,6 +2,23 @@
 
 Writing basic assembly code in Windows.
 
+## Environment setup
+
+Unlike linux, you cannot take this step for granted ever in Windows. You do not know what treachery the whole system will pull out on you - Some vc libraries might not be present, you might not have some DLL's, etc . So it is better to lay it out in the open what you might need to do for setting up a VM for windows disassembly.
+
+- Use Win XP SP3 for best results. It is just the right amount of outdated.
+- Make sure the masm you downloaded from the link installs correctly. No errors should pop up. If kernel32.dll comes <strong> during installation </strong>, make sure you have the correct visual studio libraries or run windows 3.1 installer from microsoft website.
+- The MASM32 editor GUI assembles files and links files with point and click, but some of my programs "AddtwoNumbers", "concatenateStrings" build but run and exit without output. So it is always better to assemble and link from the cmd.
+
+- Before that, make sure the following is added to the path variable (System Environment variable).
+
+-
+
+
+
+
+
+
 ## The MASM assembler
 
 <p>
@@ -28,9 +45,23 @@ Writing basic assembly code in Windows.
 - Stdin procedure call is used to take the user input which is then reflected back to the user
 
 
-## Typecasting
+## Misc Operators
 
-- PTR expression is used for typecasting
+- PTR expression is used for typecasting. Here the DEMO DWORD is typecasted to a word. You may also do it to a byte or double word.
+```C
+DEMO DWORD 10
+Mov al, WORD PTR DEMO
 
-```
+- DW is used to define arrays as shown below
+```C
+arr1 DW 1,2,34
+
+- DUP can also be used to replicate bytes. Eg bA1 DB 7 DUP(1) equiv to ba1 DB 1,1,1,1,1,1,1,1. You may also leave the values uninitialized by specifying "?" instead of "1".
+
+- Referencing array values can be a little counter-intuitive. The reference is done by number of bytes from the start of the array not the index. So wordArray[i], means i bytes from start of the array, and not the ith index.
+
+- LENGTHOF,SIZEOF,TYPE: These operators give the length of array, size of array in bytes, and the type of array
+
+- "db" is used to define bytes. The initialized string cannot be longer than 255 here.
+
 
