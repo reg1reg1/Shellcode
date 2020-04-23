@@ -10,9 +10,16 @@ Unlike linux, you cannot take this step for granted ever in Windows. You do not 
 - Make sure the masm you downloaded from the link installs correctly. No errors should pop up. If kernel32.dll comes <strong> during installation </strong>, make sure you have the correct visual studio libraries or run windows 3.1 installer from microsoft website.
 - The MASM32 editor GUI assembles files and links files with point and click, but some of my programs "AddtwoNumbers", "concatenateStrings" build but run and exit without output. So it is always better to assemble and link from the cmd.
 
-- Before that, make sure the following is added to the path variable (System Environment variable).
+- Before that, make sure the following is added to the path variable (System Environment variable). Make sure that cmd responds to "ml" and "link" commands
+<pre>
+	C:\masm32\bin;C:\masm32\lib;
+</pre>
 
--
+- The command line for assembling and linking is as follows.
+<pre>
+	ml /c /coff file1.asm
+	link /subsystem:console /LIBPATH:C:/masm32/lib  file1.obj
+</pre>
 
 
 
