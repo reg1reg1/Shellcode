@@ -58,11 +58,11 @@ Unlike linux, you cannot take this step for granted ever in Windows. You do not 
 ```C
 DEMO DWORD 10
 Mov al, WORD PTR DEMO
-
+```
 - DW is used to define arrays as shown below
 ```C
 arr1 DW 1,2,34
-
+```
 - DUP can also be used to replicate bytes. Eg bA1 DB 7 DUP(1) equiv to ba1 DB 1,1,1,1,1,1,1,1. You may also leave the values uninitialized by specifying "?" instead of "1".
 
 - Referencing array values can be a little counter-intuitive. The reference is done by number of bytes from the start of the array not the index. So wordArray[i], means i bytes from start of the array, and not the ith index.
