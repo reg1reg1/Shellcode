@@ -1,5 +1,7 @@
 # Windows Assembly Language
 
+Writing basic assembly code in Windows.
+
 ## The MASM assembler
 
 <p>
@@ -18,4 +20,17 @@
 
 -  The masm libraries are added and included, so that extra effort is not required during the linking stage.
 - <strong><i> casemap </i></strong>: This mentions the labels used in the syntax are case-sensitive.
+- The function arguments for the API calls, are mentioned in the library page of MSDN. For eg in the case of "MessageBox", the arguments are "Box owner", Address of message string, address of title string, and type of message box.
+
+### reflectvalue.asm
+
+- The data section here defines a variable. "DUP" is used to duplicate values i.e initialize all 255 value to zero
+- Stdin procedure call is used to take the user input which is then reflected back to the user
+
+
+## Typecasting
+
+- PTR expression is used for typecasting
+
+```
 
