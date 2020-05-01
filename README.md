@@ -174,3 +174,16 @@ main()
   For windows the assembler being used is <b>MASM32</b>. It can be downloaded from <a href="http://www.masm32.com/download.htm">here</a>.
 
 </p>
+
+
+
+## Resources covered so far by me
+
+- Assmebly language Primer Linux, SecurityTube
+- GDB Megaprimer, SecurityTube
+- Buffer Overflow Primer, SecurityTube
+- Assembly Language Primer Windows (MASM), SecurityTube
+- Exploit Research Primer, SecurityTube
+- Shellcoding Linux x64 systems, Pentesteracademy
+- Exploiting and Reversing Win32 Applications, Pentesteracademy
+
