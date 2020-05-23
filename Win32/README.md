@@ -1,8 +1,14 @@
-# Windows Assembly Language
+# Windows Assembly Language and Exploit Research
 
-Writing basic assembly code in Windows.
 
-## Environment setup
+Writing basic assembly code in Windows, and exploiting dumb .exes to get started in binary exploitation.
+
+
+## Windows Assembly Language Basics
+
+
+
+### Environment setup
 
 Unlike linux, you cannot take this step for granted ever in Windows. You do not know what treachery the whole system will pull out on you - Some vc libraries might not be present, you might not have some DLL's, etc . So it is better to lay it out in the open what you might need to do for setting up a VM for windows disassembly.
 
@@ -26,7 +32,7 @@ Unlike linux, you cannot take this step for granted ever in Windows. You do not 
 
 
 
-## The MASM assembler
+### The MASM assembler
 
 <p>
 	The MASM assembler is advanced and the masm assembly language syntax abstracts the use of registers, making us possible to interact with the system library , and dll's as well as providing a rich documentation on how to make these systemcalls, and what files to include. If you look at the code for MASM, it enables us to call the gui message boxes of Windows, and we do not have to refer to any registers. If the need be , we can access the memory and set variables like any other low level assembly language.
@@ -34,9 +40,9 @@ Unlike linux, you cannot take this step for granted ever in Windows. You do not 
 	The process syntax for system calls and the libraries they need may also be verified from the MSDN page.
 </p>
 
-## Syntax Explanation
+### Syntax Explanation
 
-### HelloMasm32.asm
+#### HelloMasm32.asm
 - <strong><i>.386</i></strong>: Specifies the x86 architecture syntax for the assembly code.
 - <strong><i>.model flat</i></strong>: This is common across other assembly language syntax for windows. It directs the assembler that the flat memory model needs to be used instead of the segmented mode. 
 
@@ -46,13 +52,13 @@ Unlike linux, you cannot take this step for granted ever in Windows. You do not 
 - <strong><i> casemap </i></strong>: This mentions the labels used in the syntax are case-sensitive.
 - The function arguments for the API calls, are mentioned in the library page of MSDN. For eg in the case of "MessageBox", the arguments are "Box owner", Address of message string, address of title string, and type of message box.
 
-### reflectvalue.asm
+#### reflectvalue.asm
 
 - The data section here defines a variable. "DUP" is used to duplicate values i.e initialize all 255 value to zero
 - Stdin procedure call is used to take the user input which is then reflected back to the user
 
 
-## Misc Operators
+### Misc Operators
 
 - PTR expression is used for typecasting. Here the DEMO DWORD is typecasted to a word. You may also do it to a byte or double word.
 ```C
@@ -70,5 +76,29 @@ arr1 DW 1,2,34
 - LENGTHOF,SIZEOF,TYPE: These operators give the length of array, size of array in bytes, and the type of array
 
 - "db" is used to define bytes. The initialized string cannot be longer than 255 here.
+
+
+
+## Exploit Research: Level- Basic
+
+The folder vuln exe contains the executables which we will try to exploit. These are basic .exes and the system we will run them on is **Windows XP, SP3**.
+The attacker machine could be any Ubuntu/Debian Distro. If you want the payloads to spawn a meterpretershell instead of a simple shell-bind tcp or reverse tcp, go with the Kali distros which have metasploit pre-installed.
+
+For understanding the exploitable dynamically you may use Ghidra (works on more advanced Win systems than XP, or less tedious to install atleast). I chose ImmunityDBG as it works well on the older XP systems and has sufficient features for debugging, for now.
+
+### Case-1: Server-Memcpy.exe:
+Simple case of Memcpy exploitation. Memcpy is a bad boy. Memcpy takes stuff and puts them in bags which are bigger than the stuff, causing them to spill out from the bags onto other things. This is a vanilla buffer overflow exploit. The Memcpy buffer overflow exploit on windows is the easiest. No bad characters. No ASLR, No canaries. Life is simple, good and easy.
+
+
+### Case-2: Server-Strcpy.exe:
+Strcpy is Memcpy's big brother. It does the same stupid stuff of not knowing the bag and the stuff size rule. But Strcpy does not take no bad chars like '00'. Strcpy exploit prevents us from the buffer exploit design we used in Memcpy, and forces us to remove the bad characters. Also, the more important thing is to understand how to identify bad characters that are not tolerated by the vulnerable executable. The technique is to feed the exploitables the series of characters from '\x00' to '\xff' and see if anyone of them gets truncated. Once they are , remove it and try again.
+
+Here the problem is the return address of EIP has a bad char. So , we have to modify our exploitation approach, as our payload cannot have this anymore.
+
+
+
+
+
+
 
 
