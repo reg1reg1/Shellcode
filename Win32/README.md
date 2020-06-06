@@ -1,7 +1,7 @@
 # Windows Assembly Language and Exploit Research
 
 
-Writing basic assembly code in Windows, and exploiting dumb .exes to get started in binary exploitation.
+Writing basic assembly code in Windows
 
 
 ## Windows Assembly Language Basics
@@ -79,21 +79,6 @@ arr1 DW 1,2,34
 
 
 
-## Exploit Research: Level- Basic
-
-The folder vuln exe contains the executables which we will try to exploit. These are basic .exes and the system we will run them on is **Windows XP, SP3**.
-The attacker machine could be any Ubuntu/Debian Distro. If you want the payloads to spawn a meterpretershell instead of a simple shell-bind tcp or reverse tcp, go with the Kali distros which have metasploit pre-installed.
-
-For understanding the exploitable dynamically you may use Ghidra (works on more advanced Win systems than XP, or less tedious to install atleast). I chose ImmunityDBG as it works well on the older XP systems and has sufficient features for debugging, for now.
-
-### Case-1: Server-Memcpy.exe:
-Simple case of Memcpy exploitation. Memcpy is a bad boy. Memcpy takes stuff and puts them in bags which are bigger than the stuff, causing them to spill out from the bags onto other things. This is a vanilla buffer overflow exploit. The Memcpy buffer overflow exploit on windows is the easiest. No bad characters. No ASLR, No canaries. Life is simple, good and easy.
-
-
-### Case-2: Server-Strcpy.exe:
-Strcpy is Memcpy's big brother. It does the same stupid stuff of not knowing the bag and the stuff size rule. But Strcpy does not take no bad chars like '00'. Strcpy exploit prevents us from the buffer exploit design we used in Memcpy, and forces us to remove the bad characters. Also, the more important thing is to understand how to identify bad characters that are not tolerated by the vulnerable executable. The technique is to feed the exploitables the series of characters from '\x00' to '\xff' and see if anyone of them gets truncated. Once they are , remove it and try again.
-
-Here the problem is the return address of EIP has a bad char. So , we have to modify our exploitation approach, as our payload cannot have this anymore.
 
 
 
