@@ -41,6 +41,10 @@ This file contains the common headaches to look out for, and important points to
   objcopy -j.text -O binary {yourBinary} shellFormat.bin 
   hexdump -v -e '"\\""x" 1/1 "%02x" ""' shellFormat.bin
   ```
+- To view syscall numbers 
+  ```bash
+	cat /usr/include/i386-linux-gnu/asm/unistd_32.h
+  ```
 
   
 
