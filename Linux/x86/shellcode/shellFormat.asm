@@ -1,3 +1,5 @@
+# Written for the GNU assembler
+# Shellcode written in JMP CALL POP
 .text
 
 .globl _start
