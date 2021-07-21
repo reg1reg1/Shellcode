@@ -12,7 +12,7 @@ What if the execute instruction (.text section) of such an executable is formatt
 Adding long descriptive comments in code to help people understand code easily, and also me in case I forget useful stuff.
 <b> <a href="http://shell-storm.org/shellcode/">shell-storm</a></b>
 
-<b><link of upcoming blog></b>
+<b>Refer to my Exploits repo for some binary exploitation links and guides</b> [Eg: Protostar aka now Exploit education\'s Phoenix VM](https://github.com/reg1reg1/Exploits/tree/master/exploit-exercises/exploit%20education%20challenges/protostar)
 </p>
 
 <h3>Shellcode vs Stand-alone assembly</h3>
